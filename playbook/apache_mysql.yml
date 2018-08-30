@@ -1,0 +1,39 @@
+- hosts: web
+  become: yes
+  become_user: root
+  become_method: su
+
+  tasks:
+  - name: Install Apache Mysql
+    apt: name={{ item }} state=present
+    become: yes
+    with_items:
+      - apache2
+      - mysql-server
+      - php-mysql
+      - php
+      - libapache2-mod-php
+
+  - name: Install php extensions
+    apt: name={{ item }} state=present
+    become: yes
+    with_items:
+      - php-gd
+      - php-cli
+      - php-mysql
+      - php-gd
+      - php-mbstring
+      - php-mcrypt
+      - php-pdo
+      - php-pear
+      - php-xml
+
+  - name: enabled mod_rewrite
+    apache2_module: name=rewrite state=present
+    notify:
+      - restart apache2
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+      
