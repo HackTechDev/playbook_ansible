@@ -1,0 +1,16 @@
+- hosts: web
+  become: yes
+  become_user: root
+  become_method: su
+
+  tasks:
+  - name: install common base packages for all servers
+    apt:
+      update_cache=yes
+      state=latest
+      name={{item}}
+    with_items: 
+    - htop
+    - vim
+    - screen
+    - mc

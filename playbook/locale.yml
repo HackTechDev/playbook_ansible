@@ -1,0 +1,27 @@
+- hosts: web
+  become: yes
+  become_user: root
+  become_method: su
+
+  tasks:
+  - name: generate locales
+    locale_gen:
+      name: '{{ item }}'
+      state: present
+    with_items:
+      - fr_FR.UTF-8
+
+  - name: set default locale
+    lineinfile:
+      dest: /etc/default/locale
+      regexp: '^LANG=.*$'
+      line: 'LANG=fr_FR.UTF-8'
+      create: yes
+      state: present
+
+  - name: set timezone
+    file:
+      src: /usr/share/zoneinfo/Europe/Paris
+      dest: /etc/localtime
+      force: yes
+      state: link
